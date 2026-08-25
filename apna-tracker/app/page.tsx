@@ -1,69 +1,176 @@
+import Link from "next/link";
 import Image from "next/image";
+import { dashboardSummary, companyApplications } from "./data";
+import "./dashboard.css";
 
-export default function Home() {
+const STATUS_LABELS = {
+  pending: "Pending",
+  viewed: "Viewed",
+  shortlisted: "Shortlisted",
+  rejected: "Rejected",
+  total: "Total",
+};
+
+// Replace with a real data fetch, e.g.:
+// const { user, summary, companies } = await getApplicantDashboard(userId);
+export default function DashboardPage() {
+  const user = { name: "User Name" };
+  const summary = dashboardSummary;
+  const companies = companyApplications;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="dashboard">
+      {/* Top bar */}
+      <header className="topbar">
+        <div className="topbar-left">
+          <span className="logo">Apna</span>
+          <nav className="topnav">
+            <Link href="/dashboard" className="topnav-link active">
+              Dashboard
+            </Link>
+            <Link href="/applications" className="topnav-link">
+              Applications
+            </Link>
+            <Link href="/inbox" className="topnav-link">
+              Inbox
+            </Link>
+            <Link href="/settings" className="topnav-link">
+              Settings
+            </Link>
+          </nav>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+        <div className="topbar-right">
+          <button className="icon-button" aria-label="Notifications">
+            🔔
+          </button>
+          <div className="user-menu">
+            <div className="avatar" />
+            <span className="user-name">{user.name}</span>
+            <span className="chevron">▾</span>
+          </div>
+        </div>
+      </header>
+
+      <div className="body">
+        {/* Sidebar */}
+        <aside className="sidebar">
+          <Link href="/dashboard" className="sidebar-link active">
+            Home
+          </Link>
+          <Link href="/applications" className="sidebar-link">
+            Applications
+          </Link>
+          <Link href="/saved-jobs" className="sidebar-link">
+            Saved Jobs
+          </Link>
+          <Link href="/resume" className="sidebar-link">
+            Resume
+          </Link>
+          <Link href="/profile" className="sidebar-link">
+            Profile
+          </Link>
+        </aside>
+
+        {/* Main content */}
+        <main className="main">
+          <h1 className="welcome">Welcome back, {user.name.split(" ")[0]}!</h1>
+          <p className="subtitle">Here's an overview of your job applications.</p>
+
+          {/* Stat cards */}
+          <div className="stats-grid">
+            <StatCard type="pending" label="Pending" value={summary.pending} />
+            <StatCard type="viewed" label="Viewed" value={summary.viewed} />
+            <StatCard
+              type="shortlisted"
+              label="Shortlisted"
+              value={summary.shortlisted}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+            <StatCard type="rejected" label="Rejected" value={summary.rejected} />
+            <StatCard type="total" label="Total" value={summary.total} />
+          </div>
+
+          {/* Applications by company */}
+          <div className="section-header">
+            <h2>Applications by Company</h2>
+            <Link href="/applications" className="view-all-link">
+              View all applications →
+            </Link>
+          </div>
+
+          <div className="company-grid">
+            {companies.map((company) => (
+              <CompanyCard key={company.id} company={company} />
+            ))}
+          </div>
+
+          {/* Apply to more jobs banner */}
+          <div className="banner">
+            <div className="banner-left">
+              <div className="banner-icon">＋</div>
+              <div>
+                <h3>Apply to more jobs</h3>
+                <p>Find jobs that match your profile and boost your chances.</p>
+              </div>
+            </div>
+            <Link href="/jobs" className="browse-jobs-button">
+              Browse Jobs
+            </Link>
+          </div>
+        </main>
+      </div>
     </div>
+  );
+}
+
+function StatCard({ type, label, value }) {
+  const icons = {
+    pending: "🕐",
+    viewed: "👁",
+    shortlisted: "✅",
+    rejected: "✕",
+    total: "💼",
+  };
+
+  return (
+    <div className="stat-card">
+      <div className={`stat-icon stat-icon-${type}`}>{icons[type]}</div>
+      <div className="stat-label">{label}</div>
+      <div className="stat-value">{value}</div>
+      <div className="stat-sub">applications</div>
+    </div>
+  );
+}
+
+function CompanyCard({ company }) {
+  return (
+    <Link href={`/applications?company=${company.id}`} className="company-card">
+      <div className="company-card-logo">
+        <Image
+          src={company.logo}
+          alt={`${company.name} logo`}
+          width={28}
+          height={28}
+        />
+      </div>
+
+      <div className="company-card-body">
+        <h3>{company.name}</h3>
+        <p className="company-role">{company.role}</p>
+        <p className="company-count">
+          {company.applicationCount}{" "}
+          {company.applicationCount === 1 ? "application" : "applications"}
+        </p>
+
+        <div className="status-badges">
+          {company.statuses.map((s) => (
+            <span key={s.type} className={`status-badge status-badge-${s.type}`}>
+              {s.label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <span className="company-card-arrow">›</span>
+    </Link>
   );
 }
