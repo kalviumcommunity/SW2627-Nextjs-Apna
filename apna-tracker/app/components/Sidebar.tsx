@@ -1,41 +1,48 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LayoutGrid, Briefcase, FileText, Bookmark, FileEdit, Bell, User, HelpCircle } from "lucide-react";
 
-// List of items to show in the sidebar menu
+// Added a "href" to each item — this is the page it should link to
 const menuItems = [
-  { label: "Dashboard", icon: LayoutGrid, active: true },
-  { label: "Jobs", icon: Briefcase },
-  { label: "Applications", icon: FileText, badge: 12 },
-  { label: "Saved Jobs", icon: Bookmark },
-  { label: "Resume", icon: FileEdit },
-  { label: "Notifications", icon: Bell },
-  { label: "Profile", icon: User },
+  { label: "Dashboard", icon: LayoutGrid, href: "/" },
+  { label: "Jobs", icon: Briefcase, href: "/jobs" },
+  { label: "Applications", icon: FileText, href: "/applications", badge: 12 },
+  { label: "Saved Jobs", icon: Bookmark, href: "/saved-jobs" },
+  { label: "Resume", icon: FileEdit, href: "/resume" },
+  { label: "Notifications", icon: Bell, href: "/notifications" },
+  { label: "Profile", icon: User, href: "/profile" },
 ];
 
 export default function Sidebar() {
+  // This tells us the current URL path, e.g. "/jobs"
+  const pathname = usePathname();
+
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-200 fixed left-0 top-0 flex flex-col justify-between">
       
       <div>
-        {/* Logo */}
         <div className="px-6 py-6">
           <h1 className="text-xl font-bold text-blue-600">Apna</h1>
-          <p className="text-xs text-black">CANDIDATE PORTAL</p>
+          <p className="text-xs text-gray-400">CANDIDATE PORTAL</p>
         </div>
 
-        {/* Loop through menuItems and show a button for each one */}
         <nav className="px-3 space-y-1">
           {menuItems.map((item) => {
-            const Icon = item.icon; // must start with capital letter to use as JSX
+            const Icon = item.icon;
+            
+            // Check if this item's page matches the current page
+            const isActive = pathname === item.href;
 
             return (
-              <button
+              <Link
                 key={item.label}
+                href={item.href}
                 className={
-                  item.active
+                  isActive
                     ? "w-full flex items-center justify-between px-3 py-2 rounded-lg bg-blue-600 text-white text-sm"
-                    : "w-full flex items-center justify-between px-3 py-2 rounded-lg text-black hover:bg-gray-100 text-sm"
+                    : "w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 text-sm"
                 }
               >
                 <span className="flex items-center gap-3">
@@ -43,21 +50,19 @@ export default function Sidebar() {
                   {item.label}
                 </span>
 
-                {/* Only show the badge if this item has one */}
                 {item.badge && (
-                  <span className="text-xs bg-gray-200 text-black px-2 rounded-full">
+                  <span className="text-xs bg-gray-200 text-gray-600 px-2 rounded-full">
                     {item.badge}
                   </span>
                 )}
-              </button>
+              </Link>
             );
           })}
         </nav>
       </div>
 
-      {/* Help & Support link at the bottom */}
       <div className="px-6 py-6 border-t border-gray-200">
-        <button className="flex items-center gap-2 text-sm text-black">
+        <button className="flex items-center gap-2 text-sm text-gray-500">
           <HelpCircle size={18} />
           Help & Support
         </button>
