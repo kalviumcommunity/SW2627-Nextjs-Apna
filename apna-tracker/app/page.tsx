@@ -4,6 +4,7 @@ import StatsGrid from "./components/StatsGrid";
 import UpcomingInterviews from "./components/UpcomingInterviews";
 import RecentActivity from "./components/RecentActivity";
 
+export default function Home() {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Sidebar />
