@@ -86,6 +86,7 @@ export default function ApplicationsPage() {
           </div>
 
           {/* Status filter tabs */}
+          <StatusTabs />
 
           {/* Application cards grid */}
           <div className="grid grid-cols-3 gap-4">
