@@ -14,9 +14,9 @@ export default function Home() {
         <Topbar />
 
         <div className="p-8">
-          <h1 className="text-2xl font-bold text-gray-900">Good morning, Alex</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Hello, User</h1>
           <p className="text-gray-500 text-sm mb-6">
-            Here is what&apos;s happening with your applications.
+            Here is what's happening with your applications.
           </p>
 
           <div className="mb-8">
